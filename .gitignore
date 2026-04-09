@@ -1,0 +1,32 @@
+# Byte-code files
+*.pyc
+__pycache__/
+
+# Django stuff:
+*.sqlite3
+/media
+/static
+/static_root # Если будет collectstatic
+.env # <-- Никогда не отправляй в Git, содержит секреты!
+local_settings.py # Если будешь использовать локальные настройки
+
+# Virtual environment
+/venv/
+/.venv/ # <--- Конкретно твоя venv папка
+
+# Docker
+.docker
+.dockerignore # если не хочешь делиться игнор-файлом
+!docker-compose.yml # Явно включаем compose файл, если он исключается по другим правилам
+!Dockerfile # Явно включаем Dockerfile
+
+# IDE (PyCharm)
+.idea/
+*.iml
+*.ipr
+*.iws
+
+# OS generated files
+.DS_Store
+.Trashes
+Thumbs.db
