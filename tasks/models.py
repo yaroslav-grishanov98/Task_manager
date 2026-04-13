@@ -4,6 +4,7 @@ from django.contrib.auth.models import User
 
 
 class Project(models.Model):
+    """Класс проектов"""
     title = models.CharField(max_length=200, verbose_name='Название проекта')
     description = models.TextField(blank=True, verbose_name='Описание проекта')
     created_at = models.DateTimeField(auto_now_add=True, verbose_name='Дата создания')
@@ -27,6 +28,7 @@ class Project(models.Model):
 
 
 class Task(models.Model):
+    """Класс задач"""
     title = models.CharField(max_length=200, verbose_name='Заголовок')
     description = models.TextField(blank=True, verbose_name='Описание')
     created_at = models.DateTimeField(auto_now_add=True, verbose_name='Дата создания')
@@ -50,42 +52,72 @@ class Task(models.Model):
     STATUS_CHOICES = [
         ('new', 'Новая'),
         ('in_progress', 'В работе'),
-        ('completed', 'Завершена'),
-        ('canceled', 'Отменена')
+        ("completed", "Завершена"),
+        ("canceled", "Отменена")
     ]
     status = models.CharField( # CharField - текстовое поле с ограниченной длиной.
         max_length=20,
         choices= STATUS_CHOICES,
-        default= 'new',
-        verbose_name= 'Статус'
+        default= "new",
+        verbose_name= "Статус"
     )
 
     project = models.ForeignKey(
         Project,
         on_delete=models.SET_NULL,
-        related_name='tasks',
+        related_name="tasks",
         blank=True, null=True,
-        verbose_name='Проект'
+        verbose_name="Проект"
     )
 
     # Связь с пользователем
     user = models.ForeignKey(
         User,
         on_delete=models.CASCADE, # models.CASCADE: Если пользователь удаляется, все его задачи также удаляются.
-        related_name= 'reborn_tasks',
-        verbose_name= 'Пользователь'
+        related_name= "reborn_tasks",
+        verbose_name= "Пользователь"
     )
 
     class Meta:  # Класс Meta используется для определения "метаданных" модели, то есть не-полевых вещей,
     # таких как порядок сортировки по умолчанию, удобочитаемые названия и т.д.
-        verbose_name = 'Задача'
-        verbose_name_plural = 'Задачи'
-        ordering = ['-created_at']
+        verbose_name = "Задача"
+        verbose_name_plural = "Задачи"
+        ordering = ["created_at"]
 
     def __str__(self): # --- Метод __str__ ---
     # Определяет строковое представление объекта. Очень полезно для админ-панели Django (чтобы видеть название задачи,
     # а не просто "Task object (1)") и при отладке в консоли.
         return self.title
+
+
+class Comment(models.Model):
+    """Класс комментариев"""
+    text = models.TextField(blank=True, verbose_name="Комментарий")
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name="Дата создания")
+    updated_at = models.DateTimeField(auto_now=True, verbose_name="Последнее изменение")
+
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name="comments",
+        verbose_name="Автор комментария"
+    )
+
+    task = models.ForeignKey(
+        Task,
+        on_delete=models.CASCADE,
+        related_name="comments",
+        verbose_name="Комментарий к задаче"
+    )
+
+    class Meta:
+        verbose_name = "Комментарий",
+        verbose_name_plural = "Комментарии",
+        ordering = ["created_at"]
+
+    def __str__(self):
+        return f"Комментарий от  {self.user.username} к задаче '{self.task.title}' ({self.created_at.strftime('%Y-%m-%d')})"
+
 
 
 

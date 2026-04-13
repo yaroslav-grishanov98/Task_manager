@@ -30,3 +30,5 @@ local_settings.py # Если будешь использовать локаль�
 .DS_Store
 .Trashes
 Thumbs.db
+
+.env

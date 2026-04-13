@@ -1,5 +1,7 @@
+from django.contrib.auth import authenticate
 from rest_framework import serializers
 from django.contrib.auth.models import User
+from rest_framework.authtoken.serializers import AuthTokenSerializer
 
 
 class UserRegistrationSerializer(serializers.ModelSerializer):
@@ -22,5 +24,33 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
             password=validated_date['password']
         )
         return user
+
+
+class EmailSerializer(AuthTokenSerializer):
+    """Сериализатор для входа по почте и паролю"""
+    email = serializers.EmailField(label='Email', write_only=True, help_text='Email адрес пользователя')
+    username = None
+
+    def validate(self, attrs):
+        email = attrs.get('email')
+        password = attrs.get('password')
+
+        if email and password:
+            user = User.objects.filter(email=email).first()
+
+            if user:
+                attrs['user'] = authenticate(request=self.context.get('request'),
+                                             username = user.username, password=password)
+            else:
+                attrs['user'] = None
+            if not attrs['user']:
+                msg = ('Невозможно войти с предоставленными данными')
+                raise serializers.ValidationError(msg, code='authorization')
+        else:
+            msg = ('Укажите email и пароль')
+            raise serializers.ValidationError(msg, code='authorization')
+
+        return attrs
+
 
 
