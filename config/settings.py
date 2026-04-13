@@ -1,5 +1,10 @@
 import os
 from pathlib import Path
+
+import django.core.mail.backends.smtp
+from django.conf.global_settings import EMAIL_BACKEND, EMAIL_HOST, EMAIL_PORT, EMAIL_USE_TLS, EMAIL_HOST_PASSWORD, \
+    DEFAULT_FROM_EMAIL, SERVER_EMAIL
+from django.core.mail.backends.dummy import EmailBackend
 from dotenv import load_dotenv
 
 
@@ -117,5 +122,8 @@ SPECTACULAR_SETTINGS = {
     'TITLE': 'Task Management API',
     'DESCRIPTION': 'API для управления задачами, пользователями и аутентификацией.',
     'VERSION': '1.0.0',
-    'SERVE_INCLUDE_SCHEMA': False, # Схема будет доступна по отдельному URL, а не в основной документации
+    'SERVE_INCLUDE_SCHEMA': False,
 }
+
+EMAIL_BACKEND = [django.core.mail.backends.smtp.EmailBackend]
+

@@ -161,7 +161,10 @@ class TaskAPITests(BaseAPITestCase):
         response = self.client.post(self.task_list_url, data, format='json')
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
-        self.assertIn("Проект с указанным ID не существует или не принадлежит вам.", str(response.data))
+        self.assertIn(
+            "Проект с указанным ID не существует или не принадлежит вам",
+            str(response.data['project_id_for_write'])
+        )
 
 
     def test_unauthenticated_user_cannot_create_a_task(self):
